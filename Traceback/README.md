@@ -15,18 +15,18 @@ PORT   STATE SERVICE VERSION
 |_http-title: Help us  
 Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel  
 
-![websiteLanding](https://github.com/DefinitelyNotDex/imageURLgoesHere)
+![websiteLanding](https://github.com/DefinitelyNotDex/Images/blob/master/HTB/Trace/webLanding.png)
 
 Initially, my assumption was to jump into dirb or gobuster and try to enumerate where the mentioned backdoor might be, but that doesn't get us anything here.
 Instead, hitting 'view page source' gives us this comment:
 
-![websiteComment](https://github.com/DefinitelyNotDex/imageURLgoesHere)
+![websiteComment](https://github.com/DefinitelyNotDex/Images/blob/master/HTB/Trace/webComment.png)
 
 If we google that phrase we get a Github page where the author is the same user who owned the site. 
 Scrolling down the list of web shells, we can throw all of them into the end of the URL until one works for us.
 If we also click on the Github link for that particular shell we get a set of default creds, which work nicely.
 
-![webShell](https://github.com/DefinitelyNotDex/imageURLgoesHere)
+![webShell](https://github.com/DefinitelyNotDex/Images/blob/master/HTB/Trace/webShell.png)
 
 Wonderful, we have a web shell. This shell is fully functional and you can use it to priv-esc to the actual user with minimal issues. I didn't want to deal with it, though, so I compiled my own php shell with msfvenom, uploaded it, set up a metasploit handler to catch the connection, accessed my shell url, and used that shell going forward:
 
@@ -42,7 +42,7 @@ Running that script shows us that we have a command we're allowed to run as sudo
 
 Running it, however, gets us an error. Specifically, we get a *traceback* error that the script tries to call a method that doesn't exist. Going by the name of the machine, we're on the right track.
 
-![luvitError](https://github.com/DefinitelyNotDex/imageURLgoesHere)
+![luvitError](https://github.com/DefinitelyNotDex/Images/blob/master/HTB/Trace/luvitError.png)
 
 Combing that output from the traceback might not give you much at first glance, but when I tried to throw the output of running luvit into a text file I noticed the error message was not included. What was included at the end of the file was a carrot character, which indicated to me that this might be the lua interpreter, similar to the python interpreter. Therefore, we might be able to pass it a command or script, which ended up working. I used [this](https://justhack.in/shell-escapes-cheatsheet) link to grab a very easy shell escape script, which I uploaded to the host, appended with the same luvit command, and ran:
 
